@@ -1,0 +1,26 @@
+# Build artifacts
+build/
+*.o
+*.so
+
+# 不把抓到的 pcap / 大型 raw log 直接進 git history
+# （建議用 git-lfs，或在 README 標註結果如何取得）
+*.pcap
+results/raw/**/*.log
+results/raw/**/*.json
+
+# 但保留目錄結構
+!results/raw/**/.gitkeep
+!pcaps/**/.gitkeep
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+__pycache__/
+*.pyc
+
+# 環境變數 / 機密（如果之後有雲端 provider API key 等）
+.env
+*.pem
+*.key

@@ -1,0 +1,54 @@
+# compose.multi.yml
+#
+# Topology: multi-container — bpgen、hdtn、bpsink 分別在不同 container。
+# 測的是跨 container 網路路徑（Docker shared-VM 內的 bridge network）
+# 對 throughput 的影響，作為跟 Apple container CLI（per-container
+# microVM）的對照組。
+
+services:
+  hdtn-node:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.hdtn
+    container_name: hdtn-node
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ../configs:/opt/configs:ro
+      - ../results/raw/docker-desktop:/opt/results
+      - ../pcaps/docker-desktop:/opt/pcaps
+    networks:
+      - hdtn-net
+    tty: true
+
+  bpgen:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.hdtn
+    container_name: bpgen
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - hdtn-node
+    networks:
+      - hdtn-net
+    tty: true
+
+  bpsink:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.hdtn
+    container_name: bpsink
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - hdtn-node
+    volumes:
+      - ../results/raw/docker-desktop:/opt/results
+    networks:
+      - hdtn-net
+    tty: true
+
+networks:
+  hdtn-net:
+    driver: bridge

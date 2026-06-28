@@ -1,0 +1,36 @@
+# Dockerfile.hdtn
+#
+# Build NASA HDTN inside an Ubuntu container.
+# TODO: 鎖定 base image 版本與 HDTN commit，並填入
+#       ../docs/environment-matrix.md
+
+FROM ubuntu:24.04
+
+# 基本 build 工具與 HDTN 依賴
+# TODO: 對照 nasa/HDTN README 的 Linux build 章節確認完整依賴清單，
+#       這裡先列出已知一定需要的
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    cmake \
+    git \
+    libboost-all-dev \
+    libzmq3-dev \
+    libssl-dev \
+    iproute2 \
+    iputils-ping \
+    tcpdump \
+    iperf3 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /opt
+
+# TODO: 改成 git clone 指定 commit（與 environment-matrix.md 鎖定的一致），
+#       或者改成從本機 context 複製原始碼進來，視實際 workflow 而定
+# RUN git clone https://github.com/nasa/HDTN.git
+# WORKDIR /opt/HDTN
+# RUN git checkout <locked_commit>
+
+# TODO: 實際 build 步驟（對照 HDTN README 的 CMake 流程）
+# RUN mkdir build && cd build && cmake .. && make -j$(nproc)
+
+CMD ["/bin/bash"]

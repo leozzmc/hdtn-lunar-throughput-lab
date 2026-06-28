@@ -1,0 +1,12 @@
+{
+  "_comment": "TODO: 骨架 contact plan。實際格式參考 HDTN repo 的 contact plan 範例。Phase 0 只需要一個永遠可用的 link（startTime/endTime 覆蓋整個測試時長即可），之後做 disruption 測試（B6）時才需要設計 link down/up 的時間窗口。",
+  "contacts": [
+    {
+      "source": 10,
+      "dest": 20,
+      "startTime": 0,
+      "endTime": 999999,
+      "rateBps": 1000000000
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+# compose.single.yml
+#
+# Topology: single — bpgen、hdtn、bpsink 全部在同一個 container 內。
+# 測的是 HDTN 軟體本身的 forwarding/storage overhead，
+# 不涉及跨 container 的網路路徑。
+
+services:
+  hdtn-single:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.hdtn
+    container_name: hdtn-single
+    cap_add:
+      - NET_ADMIN   # tc netem 需要
+    volumes:
+      - ../configs:/opt/configs:ro
+      - ../results/raw/docker-desktop:/opt/results
+      - ../pcaps/docker-desktop:/opt/pcaps
+    # TODO: command 留空，先進容器手動跑 bpgen/hdtn/bpsink 確認流程，
+    # 確認可行後再寫成自動化 entrypoint script
+    tty: true
+    stdin_open: true

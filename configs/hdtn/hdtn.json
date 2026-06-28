@@ -1,0 +1,12 @@
+{
+  "_comment": "TODO: 這是骨架。實際欄位需對照當下鎖定的 HDTN commit 的範例 config（通常在 HDTN repo 的 config_files/hdtn/ 目錄下）填入，欄位名稱可能隨版本變動。",
+  "_reference": "見 ../../docs/references.md 第 3 項 nasa/HDTN GitHub repo",
+  "myNodeId": 10,
+  "myBpEchoServiceId": 2047,
+  "_todo_fields": [
+    "inductsConfig",
+    "outductsConfig",
+    "storageConfig",
+    "zmqContextSocketsConfig 等，依實際版本補完"
+  ]
+}
