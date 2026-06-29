@@ -24,3 +24,7 @@ __pycache__/
 .env
 *.pem
 *.key
+
+# smoke test 的除錯用原始輸出，不是正式實驗數據，不需要長期保留在 git 歷史
+results/raw/cloud-vm/SMOKE*/
+results/raw/**/*.tsv

@@ -1,12 +1,67 @@
 {
-  "_comment": "TODO: 這是骨架。實際欄位需對照當下鎖定的 HDTN commit 的範例 config（通常在 HDTN repo 的 config_files/hdtn/ 目錄下）填入，欄位名稱可能隨版本變動。",
-  "_reference": "見 ../../docs/references.md 第 3 項 nasa/HDTN GitHub repo",
-  "myNodeId": 10,
-  "myBpEchoServiceId": 2047,
-  "_todo_fields": [
-    "inductsConfig",
-    "outductsConfig",
-    "storageConfig",
-    "zmqContextSocketsConfig 等，依實際版本補完"
-  ]
+    "hdtnConfigName": "hdtn lunar throughput lab - phase1",
+    "userInterfaceOn": true,
+    "mySchemeName": "unused_scheme_name",
+    "myNodeId": 10,
+    "myBpEchoServiceId": 2047,
+    "myCustodialSsp": "unused_custodial_ssp",
+    "myCustodialServiceId": 0,
+    "myRouterServiceId": 100,
+    "isAcsAware": true,
+    "acsMaxFillsPerAcsPacket": 100,
+    "acsSendPeriodMilliseconds": 1000,
+    "retransmitBundleAfterNoCustodySignalMilliseconds": 10000,
+    "maxBundleSizeBytes": 10000000,
+    "maxIngressBundleWaitOnEgressMilliseconds": 2000,
+    "bufferRxToStorageOnLinkUpSaturation": false,
+    "maxLtpReceiveUdpPacketSizeBytes": 65536,
+    "neighborDepletedStorageDelaySeconds": 0,
+    "fragmentBundlesLargerThanBytes": 0,
+    "enforceBundlePriority": false,
+    "zmqBoundRouterPubSubPortPath": 10200,
+    "zmqBoundTelemApiPortPath": 10305,
+    "inductsConfig": {
+        "inductConfigName": "myconfig",
+        "inductVector": [
+            {
+                "name": "stcp_ingress",
+                "convergenceLayer": "stcp",
+                "boundPort": 4556,
+                "numRxCircularBufferElements": 800,
+                "keepAliveIntervalSeconds": 15
+            }
+        ]
+    },
+    "outductsConfig": {
+        "outductConfigName": "myconfig",
+        "outductVector": [
+            {
+                "name": "stcp_egress",
+                "convergenceLayer": "stcp",
+                "nextHopNodeId": 2,
+                "remoteHostname": "localhost",
+                "remotePort": 4558,
+                "maxNumberOfBundlesInPipeline": 800,
+                "maxSumOfBundleBytesInPipeline": 900000000,
+                "keepAliveIntervalSeconds": 17
+            }
+        ]
+    },
+    "storageConfig": {
+        "storageImplementation": "asio_single_threaded",
+        "tryToRestoreFromDisk": false,
+        "autoDeleteFilesOnExit": true,
+        "totalStorageCapacityBytes": 8192000000,
+        "storageDeletionPolicy": "never",
+        "storageDiskConfigVector": [
+            {
+                "name": "d1",
+                "storeFilePath": "./store1.bin"
+            },
+            {
+                "name": "d2",
+                "storeFilePath": "./store2.bin"
+            }
+        ]
+    }
 }

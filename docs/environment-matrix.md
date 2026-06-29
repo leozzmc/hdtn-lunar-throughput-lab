@@ -16,8 +16,8 @@ git rev-parse HEAD   # 記錄這個 commit hash，填入下表
 | 項目 | 值 |
 |---|---|
 | HDTN repo | https://github.com/nasa/HDTN |
-| 鎖定 commit | _(待填)_ |
-| 鎖定日期 | _(待填)_ |
+| 鎖定 commit |eaf7b387921e81b7afd18bd0ca7bda89aebd6c08|
+| 鎖定日期 |2026-06-28|
 
 ## 環境 1：Docker Desktop on macOS
 

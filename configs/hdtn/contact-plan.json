@@ -1,12 +1,24 @@
 {
-  "_comment": "TODO: 骨架 contact plan。實際格式參考 HDTN repo 的 contact plan 範例。Phase 0 只需要一個永遠可用的 link（startTime/endTime 覆蓋整個測試時長即可），之後做 disruption 測試（B6）時才需要設計 link down/up 的時間窗口。",
-  "contacts": [
-    {
-      "source": 10,
-      "dest": 20,
-      "startTime": 0,
-      "endTime": 999999,
-      "rateBps": 1000000000
-    }
-  ]
+    "_source": "簡化自 nasa/HDTN repo module/router/contact_plans/contactPlan2Nodes.json（原檔是 3-hop topology，這裡簡化成 Phase 0 的 2-hop：bpgen(node1) -> hdtn(node10) -> bpsink(node2)）。",
+    "_note": "注意實際 schema 用的欄位是 rateBitsPerSec 與 owlt（one-way light time，單位秒），不是骨架階段猜測的 rateBps。owlt=1 是 baseline（B1, 0ms 額外延遲）；之後 Phase 1 的延遲測試改用 tc netem 在網路層套用，這裡的 owlt 維持 1 不變，除非要測試 contact-plan 層級的延遲模擬。endTime 設一個遠大於單次測試 duration 的值，確保整個測試過程 link 都可用。",
+    "contacts": [
+        {
+            "contact": 0,
+            "source": 1,
+            "dest": 10,
+            "startTime": 0,
+            "endTime": 999999,
+            "rateBitsPerSec": 0,
+            "owlt": 1
+        },
+        {
+            "contact": 1,
+            "source": 10,
+            "dest": 2,
+            "startTime": 0,
+            "endTime": 999999,
+            "rateBitsPerSec": 0,
+            "owlt": 1
+        }
+    ]
 }

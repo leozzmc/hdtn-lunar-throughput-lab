@@ -1,1 +1,8 @@
 date,env,host,topology,delay_ms,loss_pct,disruption,payload_size_mb,duration_sec,iperf_mbps,hdtn_goodput_mbps,normalized_efficiency,cpu_avg_pct,mem_rss_mb,notes
+,cloud-vm,,,,,,,60,,5901.36,,,,parsed_from=B1;rx_count=46463;duplicate_count=2840
+,cloud-vm,,,,,,,60,,6837.98,,,,parsed_from=B1-v2;rx_count=53557;duplicate_count=3507
+,cloud-vm,,,,,,,60,,7.53,,,,parsed_from=B2;rx_count=233;duplicate_count=0
+,cloud-vm,,,,,,,60,,7352.89,,,,parsed_from=C1;rx_count=49389;duplicate_count=7590
+,cloud-vm,,,,,,,60,,1.68,,,,parsed_from=C1-D;rx_count=6;duplicate_count=0
+,cloud-vm,,,,,,,60,,7284.03,,,,parsed_from=C1-pcap;rx_count=49191;duplicate_count=7252
+,cloud-vm,,,,,,,60,,6301.68,,,,parsed_from=C1-pcap-v2;rx_count=42515;duplicate_count=6357

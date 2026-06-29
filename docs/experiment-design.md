@@ -25,11 +25,18 @@
 | C1-D | Cloud Linux VM | single process | 1300ms | 0% | No |
 
 完成標準：
-- [ ] HDTN 在 Cloud VM 上 build 成功
-- [ ] bpgen → hdtn → bpsink 跑出至少一個成功傳輸的 bundle
-- [ ] tcpdump 抓到 port 4558 的封包並能用 Wireshark 開啟
-- [ ] `tc netem delay 1300ms` 套用後，goodput 有可觀察的變化
-- [ ] 上述兩組結果都寫進 `results/raw/cloud-vm/` 並能填入 summary.csv 格式
+- [x] HDTN 在 Cloud VM 上 build 成功（commit `eaf7b387921e81b7afd18bd0ca7bda89aebd6c08`，
+      Ubuntu 24.04 LTS / t3.medium，見 `docs/environment-matrix.md`）
+- [x] bpgen → hdtn → bpsink 跑出至少一個成功傳輸的 bundle（C1：56979 個 bundle 成功傳輸）
+- [x] tcpdump 抓到 port 4558 的封包並能用 Wireshark 開啟（套在 `lo`，不是 `ens5`——
+      single process topology 下流量走 loopback，見 `docs/limitations.md` 第 7 節。
+      C1-pcap-v2.pcap，約 8.45GB，已確認非空檔）
+- [x] `tc netem delay 1300ms` 套用後，goodput 有可觀察的變化（套在 `lo`）：
+      C1（0ms）約 7267 Mbit/s → C1-D（1300ms）約 1.68 Mbit/s，
+      落差主因是 pipeline window 太小造成的 BDP 問題，非單純延遲開銷
+      （見 `docs/limitations.md` 第 8 節）
+- [x] 上述兩組結果都寫進 `results/raw/cloud-vm/` 並能填入 summary.csv 格式
+      （C1、C1-D 兩筆已寫入 `results/processed/summary.csv`）
 
 ## Phase 1：完整延遲/中斷矩陣（單一環境內）
 
