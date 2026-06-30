@@ -158,15 +158,56 @@ window 內的數據。
 
 **仍未解決、刻意不下結論的部分**：
 
-為什麼 bpsink 在這段 drain 期間，交付速率精確卡在「每 5 秒 1 個
-bundle」，而不是更接近 650ms 延遲（RTT≈1.3秒）理論上應該允許的
-「每 5 秒 3-4 個」？目前沒有找到能解釋這個精確比率的機制。
-**不宣稱**這是 STCP 在高延遲下的正常/預期行為，也不宣稱這是某個
-已識別的 HDTN egress 限速機制——這是一個記錄下來但尚未完全解釋
-的觀察現象，留待之後有時間再深入 STCP/TCP 互動細節時查證
-（例如查 TCP-level congestion window、socket send buffer 大小、
-`StcpBundleSink` 的 `numRxCircularBufferElements` 緩衝行為，
-或 STCP 是否有額外的 per-send 等待邏輯）。
+為什麼 bpsink 交付速率精確卡在「每 5 秒 1 個 bundle」，而不是更接近
+650ms 延遲（RTT≈1.3秒）理論上應該允許的「每 5 秒 3-4 個」？目前沒有
+找到能解釋這個精確比率的機制。**不宣稱**這是 STCP 在高延遲下的正常/
+預期行為，也不宣稱這是某個已識別的 HDTN egress 限速機制——這是一個
+記錄下來但尚未完全解釋的觀察現象，留待之後有時間再深入 STCP/TCP
+互動細節時查證（例如查 TCP-level congestion window、socket send
+buffer 大小、`StcpBundleSink` 的 `numRxCircularBufferElements`
+緩衝行為，或 STCP 是否有額外的 per-send 等待邏輯）。
+
+**2026-06-28 補充（B2-r2 復現實驗）**：用修正後的 v4 harness
+（`BPGEN_GRACE_SEC=300`，未被 timeout 打斷）重跑同樣的設定
+（650ms delay、STCP、window=800、1MiB bundle）。`bpgen_exit_status=
+exited_normally`，`tc qdisc` 確認 `dropped=0, backlog=0`，三端最終
+統計完全對帳（`totalBundlesSent=totalBundlesAcked=
+m_ingressBundleCountEgress=Rx Count=25`）。
+
+bpsink log 裡記錄了 **25 筆 positive delivery-rate 樣本，全部都是
+約 1.6777 Mbit/s**（對應每筆樣本恰好 1 個 1MiB bundle 在一個 5 秒
+reporting interval 內送達），這乾淨復現了原始 B2 案例觀察到的固定
+positive-interval cadence。
+
+**但這不代表整場 264.6 秒 wall-clock 裡每 5 秒都送達 1 個 bundle**。
+查證 `BpSinkPattern::TransferRate_TimerExpired()` 源碼後確認：
+這個 timer 只在「跟上次相比有任何 byte/bundle 數量變化」時才會印出
+log，沒有變化的窗口會直接跳過、不留任何記錄。這次測試的 timeline 顯示
+`bpgen` 階段本身約 195.4 秒（理論上對應約 39 個 5 秒窗口），整場
+wall-clock 264.6 秒（理論上對應約 53 個窗口），但只記錄到 25 筆
+positive 樣本——代表中間有相當多窗口完全沒有 bundle 送達、被靜默跳過。
+
+因此目前能確認的、比較精確的描述是：
+
+> 在這次 650ms loopback delay 的 STCP 測試中，**每一個有記錄到的
+> positive delivery interval，恰好都送達 1 個 1MiB bundle**；
+> 同時測試期間存在數量相當的「沒有任何 bundle 送達」的靜默窗口。
+> 這代表傳輸呈現某種**間歇性（intermittent）**模式，不是穩定連續的
+> 每 5 秒 1 個。
+
+機制本身仍然未解。這可能跟 STCP send/receive buffering、TCP 在
+loopback netem delay 下的行為、HDTN source/sink 的 event loop，
+或其他尚未定位的交互作用有關，**不下結論**。
+
+**量測欄位的重要澄清**：`1.6777 Mbit/s` 是 positive-interval rate，
+不是整場的 delivered goodput。B2-r2 最終送達 25MiB payload：
+- 以設定的 60 秒 generation window 為分母：約 3.50 Mbit/s
+- 以完整 264.6 秒 wall-clock 為分母：約 0.79 Mbit/s
+
+這三個數字（interval rate、generation-window goodput、wall-clock
+goodput）衡量的是不同的事，`parse_results.py` 需要把它們拆成獨立
+欄位輸出，不能用同一個 `hdtn_goodput_mbps` 欄位含糊代表，否則會
+誤導之後比較不同延遲組的人（包括我們自己）。
 
 **對實驗方法論的影響**：
 
